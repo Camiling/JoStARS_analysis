@@ -1,7 +1,7 @@
 rm(list=ls())
 library(tailoredGlasso) # From Github/Camiling/tailoredGlasso
 load('data/PanCancer_data.RData')
-load('data/res_JoStARS_PanCancer.RData')
+load('data/res_stabJGL_PanCancer.RData')
 source('useful_functions.R')
 
 save.results=T
@@ -216,7 +216,7 @@ string.rppa = utils::read.csv(string.output, sep = "\t")
 string.rppa[, 1:2] = t(apply(string.rppa[, 1:2], 1, sort)) # First gene in alphabet is always in col 1
 colnames(string.rppa)[1:2] =  c("Gene1", "Gene2")
 
-# Combine edges in STRING and JoStARS into one table, so that we can check how many edges occur twice in the table 
+# Combine edges in STRING and stabJGL into one table, so that we can check how many edges occur twice in the table 
 # BRCA first
 df.all.edges.brca =  rbind(edges.brca.gene, string.rppa[, 1:2])
 ids.in.string = which(duplicated(df.all.edges.brca)) - nrow(edges.brca.gene) # True the second time an edge occurs (which is the duplicate). We subtract nrow to get the index of the edge in STRING df.
@@ -409,9 +409,9 @@ for(i in 1:nrow(edges.brca.gene.evidence.fgl)){
 }
 # Number of edges with evidence in STRING database
 length(ids.in.string.fgl) + n.extra.pairs.evidence.brca.fgl # 408
-(length(ids.in.string.fgl)+ n.extra.pairs.evidence.brca.fgl)/nrow(edges.brca.gene.fgl.all) # 0.06951781 for JoStARS: 0.1243144
+(length(ids.in.string.fgl)+ n.extra.pairs.evidence.brca.fgl)/nrow(edges.brca.gene.fgl.all) # 0.06951781 for stabJGL: 0.1243144
 # Also the amount of unique edges
-length(ids.in.string.fgl)/nrow(edges.brca.gene.fgl) # 0.05414471 for JoStARS: 0.1233141
+length(ids.in.string.fgl)/nrow(edges.brca.gene.fgl) # 0.05414471 for stabJGL: 0.1233141
 # Then UCEC
 df.all.edges.ucec.fgl =  rbind(edges.ucec.gene.fgl, string.rppa[, 1:2])
 ids.in.string.fgl = which(duplicated(df.all.edges.ucec.fgl)) - nrow(edges.ucec.gene.fgl) # True the second time an edge occurs (which is the duplicate). We subtract nrow to get the index of the edge in STRING df.
@@ -429,9 +429,9 @@ for(i in 1:nrow(edges.ucec.gene.evidence.fgl)){
 }
 # Number of edges with evidence in STRING database
 length(ids.in.string.fgl)+n.extra.pairs.evidence.ucec.fgl # 398
-(length(ids.in.string.fgl)+n.extra.pairs.evidence.ucec.fgl)/nrow(edges.ucec.gene.fgl.all) # 0.06879862 for JoStARS: 0.108642
+(length(ids.in.string.fgl)+n.extra.pairs.evidence.ucec.fgl)/nrow(edges.ucec.gene.fgl.all) # 0.06879862 for stabJGL: 0.108642
 # Also the amount of unique edges
-length(ids.in.string.fgl)/nrow(edges.ucec.gene.fgl) # 0.05635492 for JoStARS: 0.09974425
+length(ids.in.string.fgl)/nrow(edges.ucec.gene.fgl) # 0.05635492 for stabJGL: 0.09974425
 # Then OVCA
 df.all.edges.OVCA.fgl =  rbind(edges.OVCA.gene.fgl, string.rppa[, 1:2])
 ids.in.string.fgl = which(duplicated(df.all.edges.OVCA.fgl)) - nrow(edges.OVCA.gene.fgl) # True the second time an edge occurs (which is the duplicate). We subtract nrow to get the index of the edge in STRING df.
@@ -449,9 +449,9 @@ for(i in 1:nrow(edges.OVCA.gene.evidence.fgl)){
 }
 # Number of edges with evidence in STRING database
 length(ids.in.string.fgl)+n.extra.pairs.evidence.OVCA.fgl # 424
-(length(ids.in.string.fgl)+n.extra.pairs.evidence.OVCA.fgl)/nrow(edges.OVCA.gene.fgl.all) # 0.07026848 for JoStARS: 0.1257485
+(length(ids.in.string.fgl)+n.extra.pairs.evidence.OVCA.fgl)/nrow(edges.OVCA.gene.fgl.all) # 0.07026848 for stabJGL: 0.1257485
 # Also the amount of unique edges
-length(ids.in.string.fgl)/nrow(edges.OVCA.gene.fgl) # 0.05656849 for JoStARS: 0.1238095
+length(ids.in.string.fgl)/nrow(edges.OVCA.gene.fgl) # 0.05656849 for stabJGL: 0.1238095
 
 
 
@@ -485,7 +485,7 @@ subnet.common.fgl = (theta.est.brca.fgl!=0 & theta.est.OVCA.fgl!=0 & theta.est.u
 
 # Plot similarity matrices  -------------------------------
 
-# MCC of JoStARS estimates
+# MCC of stabJGL estimates
 tumor.names=c('BRCA','UCEC','OVCA')
 thetas.est.all = list(theta.est.brca, theta.est.ucec,theta.est.OVCA)
 thetas.est.all.fgl = list(theta.est.brca.fgl, theta.est.ucec.fgl,theta.est.OVCA.fgl)
@@ -505,7 +505,7 @@ data_melt <- melt(MCC_vals_all,na.rm=T)
 ggp <- ggplot(data_melt, aes(Var1, Var2)) + geom_tile(aes(fill = value))+
   scale_fill_gradient2(low = "darkblue", high = "red", midpoint = 0.25, limit = c(0.01,0.53), space = "Lab",name="MCC") +
   theme_minimal()+ #theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1))+
-  coord_fixed()+xlab('')+ylab('')+theme(text = element_text(size = 20),plot.title=ggplot2::element_text(size=25,hjust=0.5))+ggtitle('JoStARS')
+  coord_fixed()+xlab('')+ylab('')+theme(text = element_text(size = 20),plot.title=ggplot2::element_text(size=25,hjust=0.5))+ggtitle('stabJGL')
 ggp 
 
 data_melt.fgl <- melt(MCC_vals_all_fgl ,na.rm=T)  
@@ -515,6 +515,7 @@ ggp.fgl  <- ggplot(data_melt.fgl , aes(Var1, Var2)) + geom_tile(aes(fill = value
   coord_fixed()+xlab('')+ylab('')+theme(text = element_text(size = 20),plot.title=ggplot2::element_text(size=25,hjust=0.5))+ggtitle('FGL')
 ggp.fgl  
 
+library(patchwork)
 pdf("plots/MCC_plot.pdf", 8,4)
 (ggp.fgl +theme(legend.position = 'none')) +ggp
 dev.off()
@@ -534,11 +535,10 @@ gg.hist.fgl = ggplot2::ggplot(df.degree.fgl, aes(degree, group=Group, colour=Gro
   facet_wrap(~ Group)+theme_minimal()+scale_fill_manual(values=c("cornflowerblue","hotpink"  ,"darkorchid"))+
   ggplot2::theme(plot.title=ggplot2::element_text(hjust=0.5),text = element_text(size = 11))+xlim(0,110)+ylim(-1,17)
 
-if(save.results){
-  pdf(paste0("plots/degreehist_PanCan_JoStARS.pdf"), 8, 3)
-  print((gg.hist+ theme(legend.position = 'none')) +gg.hist.fgl)
-  dev.off()
-}
+pdf(paste0("plots/degreehist_PanCan_stabJGL.pdf"), 8, 3)
+print((gg.hist+ theme(legend.position = 'none')) +gg.hist.fgl)
+dev.off()
+
 
 
 # Find edges FGL could not identify -----------------------------------
